@@ -27,9 +27,9 @@ type redisJobRepository struct {
 	pool *pool.Pool
 }
 
-// NewJobRepository returns a new JobRepository instance with a connection to
+// NewJobRepository returns a new Repository instance with a connection to
 // the specified Redis endpoint.
-func NewJobRepository(host string) JobRepository {
+func NewJobRepository(host string) Repository {
 	pool, err := pool.NewPool("tcp", host, 4)
 	if err != nil {
 		log.Errorf("Error instantiating Redis pool: %s", err)
@@ -105,13 +105,13 @@ func (r *redisJobRepository) Update(jobID, attr, value string) error {
 	return reply.Err
 }
 
-func (r *redisJobRepository) GetJobLog(jobID string, index int) (*JobLog, error) {
+func (r *redisJobRepository) GetJobLog(jobID string, index int) (*Log, error) {
 	lines, err := r.command("lrange", jobLogKey(jobID), index, -1).List()
 	if err != nil {
 		return nil, err
 	}
 
-	return &JobLog{Lines: lines}, nil
+	return &Log{Lines: lines}, nil
 }
 
 func (r *redisJobRepository) AppendLogLine(jobID, logLine string) error {

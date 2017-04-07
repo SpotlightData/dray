@@ -12,7 +12,7 @@ type JobManagerTestSuite struct {
 	suite.Suite
 
 	job  *Job
-	step *JobStep
+	step *Step
 	jm   *jobManager
 	r    *mockRepository
 	e    *mockExecutor
@@ -20,7 +20,7 @@ type JobManagerTestSuite struct {
 }
 
 func (suite *JobManagerTestSuite) SetupTest() {
-	suite.step = &JobStep{
+	suite.step = &Step{
 		Name:        "Step1",
 		Source:      "foo/bar",
 		Environment: []EnvVar{{Variable: "y", Value: "2"}},
@@ -30,7 +30,7 @@ func (suite *JobManagerTestSuite) SetupTest() {
 		ID:          "123",
 		Name:        "foo",
 		Environment: []EnvVar{{Variable: "x", Value: "1"}},
-		Steps:       []JobStep{*suite.step},
+		Steps:       []Step{*suite.step},
 	}
 
 	suite.r = &mockRepository{}
@@ -85,7 +85,7 @@ func (suite *JobManagerTestSuite) TestDelete() {
 
 func (suite *JobManagerTestSuite) TestGetLog() {
 	index := 3
-	jobLog := &JobLog{Index: 3}
+	jobLog := &Log{Index: 3}
 
 	suite.r.On("GetJobLog", suite.job.ID, index).Return(jobLog, suite.err)
 

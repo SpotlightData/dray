@@ -12,9 +12,9 @@ type jobStepExecutor struct {
 	client *docker.Client
 }
 
-// NewExecutor returns a JobStepExecutor instance with a connection to the
+// NewExecutor returns a StepExecutor instance with a connection to the
 // specified Docker API endpoint.
-func NewExecutor(dockerEndpoint string) JobStepExecutor {
+func NewExecutor(dockerEndpoint string) StepExecutor {
 	client, err := docker.NewClient(dockerEndpoint)
 	if err != nil {
 		log.Errorf("Error instantiating Docker client: %s", err)
@@ -144,7 +144,8 @@ func (e *jobStepExecutor) ensureImage(name string, force bool) error {
 	}
 
 	if force && image != nil {
-		newImage, err := e.client.InspectImage(name)
+		var newImage *docker.Image
+		newImage, err = e.client.InspectImage(name)
 		if err != nil {
 			return err
 		}

@@ -13,7 +13,7 @@ func init() {
 	log.SetLevel(log.DebugLevel)
 }
 
-type handler func(jm job.JobManager, r *http.Request, w http.ResponseWriter)
+type handler func(jm job.Manager, r *http.Request, w http.ResponseWriter)
 
 type statusLoggingResponseWriter struct {
 	http.ResponseWriter
@@ -31,12 +31,12 @@ type Server interface {
 }
 
 type jobServer struct {
-	jobManager job.JobManager
+	jobManager job.Manager
 }
 
 // NewServer returns a new Server instance which will handle Dray service
-// requests and defer work to the specified JobManager.
-func NewServer(jm job.JobManager) Server {
+// requests and defer work to the specified Manager.
+func NewServer(jm job.Manager) Server {
 	return &jobServer{jobManager: jm}
 }
 
@@ -45,7 +45,7 @@ func (s *jobServer) Start(port int) {
 
 	log.Infof("Server running on port %d", port)
 	portString := fmt.Sprintf(":%d", port)
-	http.ListenAndServe(portString, router)
+	log.Fatal(http.ListenAndServe(portString, router))
 }
 
 func (s *jobServer) createRouter() *mux.Router {

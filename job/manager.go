@@ -22,13 +22,13 @@ const (
 )
 
 type jobManager struct {
-	repository JobRepository
-	executor   JobStepExecutor
+	repository Repository
+	executor   StepExecutor
 }
 
-// NewJobManager returns a JobManager instance with connections to the
-// specified JobRepository and JobStepExecutor.
-func NewJobManager(r JobRepository, e JobStepExecutor) JobManager {
+// NewJobManager returns a Manager instance with connections to the
+// specified Repository and StepExecutor.
+func NewJobManager(r Repository, e StepExecutor) Manager {
 	return &jobManager{
 		repository: r,
 		executor:   e,
@@ -75,7 +75,7 @@ func (jm *jobManager) Execute(job *Job) error {
 	return err
 }
 
-func (jm *jobManager) GetLog(job *Job, index int) (*JobLog, error) {
+func (jm *jobManager) GetLog(job *Job, index int) (*Log, error) {
 	return jm.repository.GetJobLog(job.ID, index)
 }
 

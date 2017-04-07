@@ -33,9 +33,9 @@ func (m *mockRepository) Update(jobID, attr, value string) error {
 	return args.Error(0)
 }
 
-func (m *mockRepository) GetJobLog(jobID string, index int) (*JobLog, error) {
+func (m *mockRepository) GetJobLog(jobID string, index int) (*Log, error) {
 	args := m.Mock.Called(jobID, index)
-	return args.Get(0).(*JobLog), args.Error(1)
+	return args.Get(0).(*Log), args.Error(1)
 }
 
 func (m *mockRepository) AppendLogLine(jobID, logLine string) error {

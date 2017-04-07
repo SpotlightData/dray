@@ -10,17 +10,20 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func listJobs(jm job.JobManager, r *http.Request, w http.ResponseWriter) {
+func listJobs(jm job.Manager, r *http.Request, w http.ResponseWriter) {
 	jobs, err := jm.ListAll()
 	if err != nil {
 		handleErr(err, w)
 		return
 	}
 
-	json.NewEncoder(w).Encode(jobs)
+	err = json.NewEncoder(w).Encode(jobs)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
-func createJob(jm job.JobManager, r *http.Request, w http.ResponseWriter) {
+func createJob(jm job.Manager, r *http.Request, w http.ResponseWriter) {
 	j := &job.Job{}
 	err := json.NewDecoder(r.Body).Decode(j)
 	if err != nil {
@@ -35,16 +38,19 @@ func createJob(jm job.JobManager, r *http.Request, w http.ResponseWriter) {
 	}
 
 	go func() {
-		if err := jm.Execute(j); err != nil {
+		if err = jm.Execute(j); err != nil {
 			log.Error(err)
 		}
 	}()
 
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(j)
+	err = json.NewEncoder(w).Encode(j)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
-func getJob(jm job.JobManager, r *http.Request, w http.ResponseWriter) {
+func getJob(jm job.Manager, r *http.Request, w http.ResponseWriter) {
 	jobID := mux.Vars(r)["jobid"]
 	j, err := jm.GetByID(jobID)
 
@@ -53,10 +59,13 @@ func getJob(jm job.JobManager, r *http.Request, w http.ResponseWriter) {
 		return
 	}
 
-	json.NewEncoder(w).Encode(j)
+	err = json.NewEncoder(w).Encode(j)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
-func getJobLog(jm job.JobManager, r *http.Request, w http.ResponseWriter) {
+func getJobLog(jm job.Manager, r *http.Request, w http.ResponseWriter) {
 	jobID := mux.Vars(r)["jobid"]
 
 	indexQuery := querystringValue(r, "index")
@@ -71,16 +80,19 @@ func getJobLog(jm job.JobManager, r *http.Request, w http.ResponseWriter) {
 		return
 	}
 
-	log, err := jm.GetLog(j, index)
+	jobLog, err := jm.GetLog(j, index)
 	if err != nil {
 		handleErr(err, w)
 		return
 	}
 
-	json.NewEncoder(w).Encode(log)
+	err = json.NewEncoder(w).Encode(jobLog)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
-func deleteJob(jm job.JobManager, r *http.Request, w http.ResponseWriter) {
+func deleteJob(jm job.Manager, r *http.Request, w http.ResponseWriter) {
 	jobID := mux.Vars(r)["jobid"]
 
 	j, err := jm.GetByID(jobID)

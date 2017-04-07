@@ -52,10 +52,10 @@ type JobStepExecutorTestSuite struct {
 	suite.Suite
 
 	job     *Job
-	jobStep *JobStep
+	jobStep *Step
 	mux     *testmux.Router
 	server  *httptest.Server
-	jse     JobStepExecutor
+	jse     StepExecutor
 }
 
 func (suite *JobStepExecutorTestSuite) SetupTest() {
@@ -65,13 +65,13 @@ func (suite *JobStepExecutorTestSuite) SetupTest() {
 	suite.server = httptest.NewServer(suite.mux)
 	suite.jse = NewExecutor(suite.server.URL)
 
-	suite.jobStep = &JobStep{
+	suite.jobStep = &Step{
 		id:     "abc123",
 		Source: "foo",
 	}
 
 	suite.job = &Job{
-		Steps: []JobStep{*suite.jobStep},
+		Steps: []Step{*suite.jobStep},
 	}
 }
 

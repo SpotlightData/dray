@@ -56,12 +56,12 @@ func (m *mockJobManager) Execute(j *job.Job) error {
 	return args.Error(0)
 }
 
-func (m *mockJobManager) GetLog(j *job.Job, index int) (*job.JobLog, error) {
-	var jl *job.JobLog
+func (m *mockJobManager) GetLog(j *job.Job, index int) (*job.Log, error) {
+	var jl *job.Log
 	args := m.Mock.Called(j, index)
 
 	if logArg := args.Get(0); logArg != nil {
-		jl = logArg.(*job.JobLog)
+		jl = logArg.(*job.Log)
 	}
 
 	return jl, args.Error(1)
@@ -190,7 +190,7 @@ func (suite *APITestSuite) TestGetJobServerError() {
 
 func (suite *APITestSuite) TestGetJobLogSuccess() {
 	index := 99
-	jobLog := &job.JobLog{Lines: []string{"foo", "bar"}}
+	jobLog := &job.Log{Lines: []string{"foo", "bar"}}
 
 	suite.jm.On("GetByID", suite.j.ID).Return(suite.j, nil)
 	suite.jm.On("GetLog", suite.j, index).Return(jobLog, nil)

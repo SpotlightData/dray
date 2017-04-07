@@ -8,7 +8,7 @@ import (
 
 func TestJobCurrentStep(t *testing.T) {
 	job := Job{
-		Steps:          []JobStep{{Name: "step1"}, {Name: "step2"}},
+		Steps:          []Step{{Name: "step1"}, {Name: "step2"}},
 		StepsCompleted: 1,
 	}
 
@@ -20,7 +20,7 @@ func TestJobCurrentStepEnvironment(t *testing.T) {
 	var2 := EnvVar{Variable: "fiz", Value: "bin"}
 	job := Job{
 		Environment:    Environment{var1},
-		Steps:          []JobStep{{Environment: Environment{var2}}},
+		Steps:          []Step{{Environment: Environment{var2}}},
 		StepsCompleted: 0,
 	}
 
@@ -31,40 +31,40 @@ func TestJobCurrentStepEnvironment(t *testing.T) {
 }
 
 func TestJobStepUsesStdOutPipe(t *testing.T) {
-	js := JobStep{}
+	js := Step{}
 	assert.True(t, js.usesStdOutPipe())
 
-	js = JobStep{Output: "stdout"}
+	js = Step{Output: "stdout"}
 	assert.True(t, js.usesStdOutPipe())
 
-	js = JobStep{Output: "foo"}
+	js = Step{Output: "foo"}
 	assert.False(t, js.usesStdOutPipe())
 }
 
 func TestJobStepUsesStdErrPipe(t *testing.T) {
-	js := JobStep{Output: "stderr"}
+	js := Step{Output: "stderr"}
 	assert.True(t, js.usesStdErrPipe())
 
-	js = JobStep{}
+	js = Step{}
 	assert.False(t, js.usesStdErrPipe())
 
-	js = JobStep{Output: "foo"}
+	js = Step{Output: "foo"}
 	assert.False(t, js.usesStdErrPipe())
 }
 
 func TestJobStepUsesFilePipe(t *testing.T) {
-	js := JobStep{Output: "/foo"}
+	js := Step{Output: "/foo"}
 	assert.True(t, js.usesFilePipe())
 
-	js = JobStep{}
+	js = Step{}
 	assert.False(t, js.usesFilePipe())
 
-	js = JobStep{Output: "foo"}
+	js = Step{Output: "foo"}
 	assert.False(t, js.usesFilePipe())
 }
 
 func TestJobStepFilePipePath(t *testing.T) {
-	js := JobStep{Source: "foo"}
+	js := Step{Source: "foo"}
 
 	// Using hard-coded md5 hash of the string "foo"
 	assert.Equal(t, "/tmp/acbd18db4cc2f85cedef654fccc4a4d8", js.filePipePath())
